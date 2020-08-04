@@ -1,0 +1,10 @@
+.idea
+db.sqlite3
+*.pyc
+__pycache__
+**/*.pyc
+**/__pycache__
+.DS_Store
+*.sqlite3
+!.travis.yml
+/.vscode
