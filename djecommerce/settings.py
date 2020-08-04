@@ -10,7 +10,7 @@ dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
 SECRET_KEY = str(os.environ.get('SECRET_KEY', ''))
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['35.181.136.156']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
