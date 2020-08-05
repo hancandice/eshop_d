@@ -5,7 +5,7 @@
     font-size: 16px;
     font-variant: normal;
     padding: 0;
-    margin: 0;
+    /* margin: 0; */
     -webkit-font-smoothing: antialiased;
   }
 
@@ -29,7 +29,7 @@
     text-decoration: none;
     -webkit-transition: all 150ms ease;
     transition: all 150ms ease;
-    float: left;
+    float: right;
     margin-left: 12px;
     margin-top: 28px;
   }
@@ -42,7 +42,7 @@
 
   #stripe-form {
     padding: 30px;
-    height: 120px;
+    /* height: 120px; */
   }
 
   label {
@@ -59,7 +59,7 @@
   }
 
   .stripe-form-row {
-    width: 70%;
+    width: 100%;
     float: left;
   }
 
@@ -173,9 +173,6 @@
                   />
                 </div>
               </div>
-
-              <!-- Used to display form errors. -->
-              <div id="card-errors" role="alert"></div>
             </div>
 
             <button id="stripeBtn">Submit Payment</button>
@@ -188,7 +185,6 @@
       <div class="col-md-12 mb-4">
         {% include "order_snippet.html" %}
       </div>
-      
 
       <!--Grid column-->
     </div>

@@ -1,11 +1,21 @@
 {% extends 'base.html' %} 
 {% load pybo_filter %}
+{% block extra_head %}
+<style>
+.table td, .table th {
+  padding: 0.1rem;
+  vertical-align:middle;
+  border-top: 1px solid #dee2e6;
+}
+</style>
+{% endblock extra_head %}
+
 {% block content %}
 
 <div class="container my-3">
   <div class="row justify-content-between my-3">
     <span class="col-2">
-      <select class="form-control so">
+      <select class="form-control so" style="width: fit-content;">
         <option value="recent"{% if so == 'recent' %}selected{% endif %}>Recent</option>
         <option value="recommend"{% if so == 'recommend' %}selected{% endif %}>Recommend</option>
         <option value="popular"{% if so == 'popular' %}selected{% endif %}>Popular</option>
@@ -16,7 +26,7 @@
       <div class="input-group-append">
         <button class="btn-floating btn-sm btn-mdb-color" type="button" id="btnSearch" style="z-index: 0; border: none;"><i class="fas fa-search"></i></button>
       </div>
-      <input type="text" class="ml-2 form-control kw" value="{{ kw|default_if_none:''}}" placeholder="Search">
+      <input type="text" class="ml-2 form-control kw" value="{{ kw|default_if_none:''}}">
     </div>
   </div>
   <table class="table">
