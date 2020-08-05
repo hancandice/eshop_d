@@ -24,15 +24,13 @@
     "
   >
     <span>{{ question.voter.count }}</span>
-    {% if user.is_authenticated %}
-    <a
+    <a 
       href="#"
       data-uri="{% url 'pybo:vote_question' question.id %}"
-      class="recommend"
+      class="recommend {% if not user.is_authenticated %}disabled{% endif %}"
       style="color: whitesmoke;"
       ><i class="fas fa-thumbs-up fa-2x"></i
     ></a>
-    {% endif %}
   </div>
   </h2>
   <div class="row my-3">
@@ -150,15 +148,13 @@
     "
   >
     <span>{{ answer.voter.count }}</span>
-    {% if user.is_authenticated %}
     <a
       href="#"
       data-uri="{% url 'pybo:vote_question' question.id %}"
-      class="recommend"
+      class="recommend {% if not user.is_authenticated %}disabled{% endif %}"
       style="color: whitesmoke;"
       ><i class="fas fa-thumbs-up fa-2x"></i
     ></a>
-    {% endif %}
   </div>
   </div>
   <div class="row my-2" style="display: flex; justify-content: space-around;">
@@ -274,13 +270,7 @@
     {% endif %}
     <div class="form-group">
       <textarea
-        {%
-        if
-        not
-        user.is_authenticated
-        %}disabled{%
-        endif
-        %}
+        {% if not user.is_authenticated %}disabled{% endif %}
         name="content"
         id="answerContent"
         class="form-control"
