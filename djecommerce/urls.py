@@ -10,6 +10,8 @@ urlpatterns = [
     path('pybo/', include('pybo.urls', namespace='pybo')),
 ]
 
+handler404 = 'core.views.page_not_found'
+
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL,
                           document_root=settings.STATIC_ROOT)

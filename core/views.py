@@ -15,6 +15,12 @@ from .forms import CheckoutForm, CouponForm
 stripe.api_key = settings.STRIPE_SECRET_KEY
 STRIPE_PUBLIC_KEY = settings.STRIPE_PUBLISHABLE_KEY
 
+def page_not_found(request, exception):
+
+    # 404 Page not found
+   
+    return render(request, '404.html', {"exception":exception})
+
 
 def index(request):
     page = request.GET.get('page', '1')
