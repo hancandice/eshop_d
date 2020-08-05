@@ -10,6 +10,7 @@ def voteQuestion(request, questionId):
         messages.warning(request, "You can't 'Like' your own post")
     else:
         question.voter.add(request.user)
+        messages.success(request, f"Like it 👍🏻 to #post [{question.subject}]")
     return redirect('pybo:detail', questionId=question.id)
 
     # Question 모델의 vorter는 여러사람을 추가할 수 있는 ManyToManyField이므로 question.voter.add(request.user) 처럼 add 함수를 사용하여 추천인을 추가해야 한다. 
@@ -22,4 +23,5 @@ def voteAnswer(request, answerId):
         messages.warning(request, "You can't 'Like' your own post")
     else:
         answer.voter.add(request.user)
+        messages.success(request, f"Like it 👍🏻 to #{answer.author.username}'s answer on #post [{answer.question.subject}]")
     return redirect('pybo:detail', questionId=answer.question.id)
