@@ -23,7 +23,7 @@ def page_not_found(request, exception):
     return render(request, '404.html', {})
 
 
-def internal_server_error(request, exception):
+def internal_server_error(request):
 
     # 500 internal server error
 
