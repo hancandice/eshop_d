@@ -87,22 +87,23 @@ class CheckoutView(View):
                 'DISPLAY_COUPON_FORM': True,
             }
 
-            shipping_address_qs = Address.objects.filter(
+            default_shipping_address = Address.objects.get(
                 user=self.request.user,
                 address_type="S",
                 default_address=True,
                 )
-            if shipping_address_qs.exists():
-                context.update({"default_shipping_address": shipping_address_qs[0]})  
 
-            billing_address_qs = Address.objects.filter(
+            if default_shipping_address:
+                context.update({"default_shipping_address": default_shipping_address})  
+
+            default_billing_address_qs = Address.objects.filter(
                 user=self.request.user,
                 address_type="B",
                 default_address=True,
                 )
-            if billing_address_qs.exists():
-                context.update({"default_billing_address": billing_address_qs[0]})    
 
+            if default_billing_address_qs.exists():
+                context.update({"default_billing_address": default_billing_address_qs[0]})    
 
             return render(self.request, "checkout.html", context)
         except ObjectDoesNotExist:
@@ -115,20 +116,18 @@ class CheckoutView(View):
             if form.is_valid():
                 use_default_shipping = form.cleaned_data.get('use_default_shipping')
                 if use_default_shipping:
-                    print("Using the default shipping address")
-                    shipping_address_qs = Address.objects.filter(
+                    default_shipping_address = Address.objects.get(
                                             user=self.request.user,
                                             address_type="S",
                                             default_address=True,
                                             )
-                    if shipping_address_qs.exists():
-                        shipping_address = shipping_address_qs[0]
+                    if default_shipping_address:
+                        shipping_address = default_shipping_address
                         order.shipping_address = shipping_address
                     else:
                         messages.info(self.request, "No default shipping address available.")    
                         return redirect("core:checkout")
-                else:
-                    print("User is entering a new shipping address.")        
+                else:     
                     shipping_address1 = form.cleaned_data.get('shipping_address')
                     shipping_address2 = form.cleaned_data.get('shipping_address2')
                     shipping_country = form.cleaned_data.get('shipping_country')
@@ -148,12 +147,22 @@ class CheckoutView(View):
 
                         set_default_shipping = form.cleaned_data.get('set_default_shipping')
                         if set_default_shipping:
+                            ex_default_shipping_address = Address.objects.get(
+                                            user=self.request.user,
+                                            address_type="S",
+                                            default_address=True,
+                                            )
+                            if ex_default_shipping_address:
+                                ex_default_shipping_address.default_address=False
+                                ex_default_shipping_address.save()
+
                             shipping_address.default_address=True
                             shipping_address.save()
                             order.shipping_address = shipping_address    
 
                     else:
-                        messages.info(self.request, "Please fill in the required shipping address fields.")    
+                        messages.info(self.request, "Please fill in the required address fields.")
+                        return redirect("core:checkout")    
 
                 
 
@@ -167,23 +176,22 @@ class CheckoutView(View):
                     billing_address.pk = None
                     billing_address.address_type="B"
                     billing_address.save()
+                    use_default_billing = False
                     order.billing_address = billing_address
 
                 elif use_default_billing:
-                    print("Using the default billing address")
-                    billing_address_qs = Address.objects.filter(
+                    default_billing_address = Address.objects.get(
                                             user=self.request.user,
                                             address_type="B",
                                             default_address=True,
                                             )
-                    if billing_address_qs.exists():
-                        billing_address = billing_address_qs[0]
+                    if default_billing_address:
+                        billing_address = default_billing_address
                         order.billing_address = billing_address
                     else:
                         messages.info(self.request, "No default billing address available.")    
                         return redirect("core:checkout")
-                else:
-                    print("User is entering a new billing address.")        
+                else:       
                     billing_address1 = form.cleaned_data.get('billing_address')
                     billing_address2 = form.cleaned_data.get('billing_address2')
                     billing_country = form.cleaned_data.get('billing_country')
@@ -203,12 +211,22 @@ class CheckoutView(View):
 
                         set_default_billing = form.cleaned_data.get('set_default_billing')
                         if set_default_billing:
+                            ex_default_billing_address = Address.objects.get(
+                                            user=self.request.user,
+                                            address_type="B",
+                                            default_address=True,
+                                            )
+                            if ex_default_billing_address:
+                                ex_default_billing_address.default_address=False
+                                ex_default_billing_address.save()
+
                             billing_address.default_address=True
                             billing_address.save()
                             order.billing_address = billing_address
                             
                     else:
                         messages.info(self.request, "Please fill in the required billing address fields.")   
+                        return redirect("core:checkout")
 
                 payment_option = form.cleaned_data.get('payment_option')
                 order.payment_option = payment_option
@@ -279,7 +297,7 @@ class PaymentView(View):
                 item.save()
 
             messages.success(
-                self.request, "Your order was successful.")
+                self.request, f"Order was successful. Your order reference is {order.ref_code}")
             return redirect("/")
 
         except stripe.error.CardError as e:
