@@ -78,6 +78,10 @@
     {% include "footer.html" %}
 
     <!-- SCRIPTS -->
+    <script>
+      const year = document.getElementById("footer-year");
+      year.innerHTML = new Date().getFullYear();
+    </script>
     <!-- JQuery -->
     <script
       type="text/javascript"
