@@ -87,14 +87,14 @@ class CheckoutView(View):
                 'DISPLAY_COUPON_FORM': True,
             }
 
-            default_shipping_address = Address.objects.get(
+            default_shipping_address_qs = Address.objects.filter(
                 user=self.request.user,
                 address_type="S",
                 default_address=True,
                 )
 
-            if default_shipping_address:
-                context.update({"default_shipping_address": default_shipping_address})  
+            if default_shipping_address_qs:
+                context.update({"default_shipping_address": default_shipping_address_qs[0]})  
 
             default_billing_address_qs = Address.objects.filter(
                 user=self.request.user,
@@ -116,13 +116,13 @@ class CheckoutView(View):
             if form.is_valid():
                 use_default_shipping = form.cleaned_data.get('use_default_shipping')
                 if use_default_shipping:
-                    default_shipping_address = Address.objects.get(
+                    default_shipping_address_qs = Address.objects.filter(
                                             user=self.request.user,
                                             address_type="S",
                                             default_address=True,
                                             )
-                    if default_shipping_address:
-                        shipping_address = default_shipping_address
+                    if default_shipping_address_qs.exists():
+                        shipping_address = default_shipping_address_qs[0]
                         order.shipping_address = shipping_address
                     else:
                         messages.info(self.request, "No default shipping address available.")    
@@ -147,12 +147,13 @@ class CheckoutView(View):
 
                         set_default_shipping = form.cleaned_data.get('set_default_shipping')
                         if set_default_shipping:
-                            ex_default_shipping_address = Address.objects.get(
+                            ex_default_shipping_address_qs = Address.objects.filter(
                                             user=self.request.user,
                                             address_type="S",
                                             default_address=True,
                                             )
-                            if ex_default_shipping_address:
+                            if ex_default_shipping_address_qs.exists():
+                                ex_default_shipping_address=ex_default_shipping_address_qs[0]
                                 ex_default_shipping_address.default_address=False
                                 ex_default_shipping_address.save()
 
@@ -180,13 +181,13 @@ class CheckoutView(View):
                     order.billing_address = billing_address
 
                 elif use_default_billing:
-                    default_billing_address = Address.objects.get(
+                    default_billing_address_qs = Address.objects.filter(
                                             user=self.request.user,
                                             address_type="B",
                                             default_address=True,
                                             )
-                    if default_billing_address:
-                        billing_address = default_billing_address
+                    if default_billing_address_qs.exists():
+                        billing_address = default_billing_address_qs[0]
                         order.billing_address = billing_address
                     else:
                         messages.info(self.request, "No default billing address available.")    
@@ -211,12 +212,13 @@ class CheckoutView(View):
 
                         set_default_billing = form.cleaned_data.get('set_default_billing')
                         if set_default_billing:
-                            ex_default_billing_address = Address.objects.get(
+                            ex_default_billing_address_qs = Address.objects.filter(
                                             user=self.request.user,
                                             address_type="B",
                                             default_address=True,
                                             )
-                            if ex_default_billing_address:
+                            if ex_default_billing_address_qs.exists():
+                                ex_default_billing_address = ex_default_billing_address_qs[0]
                                 ex_default_billing_address.default_address=False
                                 ex_default_billing_address.save()
 
